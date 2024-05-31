@@ -56,6 +56,61 @@ Once the dashboard is running, navigate to `http://localhost:8050` in your web b
 - **View Charts**: The dashboard displays various charts related to the data distribution and vector analyses of the emails.
 - **Classify Emails**: Enter the text of an email in the provided text box and submit it to see whether it is classified as spam or ham.
 
+  ## API Endpoint: `/predict`
+
+### Description
+The `/predict` endpoint is responsible for receiving email data and returning a classification result. It supports POST requests where the email subject and body are provided, and it responds with the email's classification as either spam or ham.
+
+### HTTP Method
+`POST`
+
+### Request URL
+```
+/predict
+```
+
+### Request Body
+The request must include a JSON object with the following properties:
+- `subject`: A string representing the subject of the email.
+- `body`: A string representing the body of the email.
+
+#### Example Request Body
+```json
+{
+  "subject": "Exclusive Offer Just for You!",
+  "body": "Hello, I have a fantastic offer for you that you can't miss. Check out our website for amazing discounts on all products."
+}
+```
+
+### Successful Response
+A successful request returns a JSON object with the classification of the email.
+
+#### Response Properties
+- `classification`: (string) The classification result, either "spam" or "ham".
+
+#### Example Successful Response
+```json
+{
+  "classification": "spam"
+}
+```
+
+### Error Response
+In case of an error, such as a missing required field, the API will return an error message.
+
+#### HTTP Status Code
+- `400 Bad Request`: The request was unacceptable, often due to missing a required parameter.
+
+#### Example Error Response
+```json
+{
+  "error": "Missing required field: subject"
+}
+```
+
+## Usage
+To use this API, send a POST request to the `/predict` endpoint with a JSON payload containing the subject and body of the email you wish to classify. The API will process this data using a pre-trained machine learning model and return whether the email is likely to be spam or ham.
+
 ## Troubleshooting
 - If you encounter any issues with library dependencies, ensure that all packages are correctly installed by re-running `pip install -r requirements.txt`.
 - Make sure that no other processes are using the required ports (typically 8050 for Dash).
