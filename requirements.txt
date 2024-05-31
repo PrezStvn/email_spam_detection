@@ -1,0 +1,8 @@
+dash
+pandas
+plotly-express
+scikit-learn
+flask
+flask-cors
+requests
+pickle5  # If you're using pickle and need compatibility with newer Python versions
