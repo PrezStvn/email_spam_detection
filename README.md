@@ -17,6 +17,7 @@ Before you begin, ensure you have Python installed on your machine. It is recomm
 
 1. **Clone the Repository:**
 git clone https://github.com/PrezStvn/email_spam_detection.git
+
 cd email_spam_detection
 
 
@@ -33,17 +34,20 @@ cd email_spam_detection
   ```
 
 3. **Install Required Libraries:**
+
 pip install -r requirements.txt
 
 
 ## Running the Application
 
 1. **Start the Backend:**
+
 python email_backend.py
 
 Ensure the backend server is running before starting the frontend.
 
 2. **Launch the Dashboard:**
+
 python email_dash.py
 
 Once the dashboard is running, navigate to `http://localhost:8050` in your web browser to view it.
