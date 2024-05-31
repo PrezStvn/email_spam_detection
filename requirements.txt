@@ -5,6 +5,4 @@ scikit-learn
 flask
 flask-cors
 requests
-json
-unittest
-pickle5  # If you're using pickle and need compatibility with newer Python versions
+
