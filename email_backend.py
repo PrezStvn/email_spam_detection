@@ -21,21 +21,30 @@ with open(os.path.join(vectors, 'body_vectorizer.pkl'), 'rb') as file:
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    json_data = request.json
-    subject = json_data['subject'].lower()
-    body = json_data['body'].lower()
+    try:
+        json_data = request.json
+        subject = json_data['subject'].lower()
+        body = json_data['body'].lower()
 
-    subject = re.sub(r'[^a-zA-Z\s]', '', subject)
-    body = re.sub(r'[^a-zA-Z\s]', '', body)
-
-    # Transform the subject and body
-    subject_vec = subject_vectorizer.transform([subject])
-    body_vec = body_vectorizer.transform([body])
-    combined_vec = hstack([subject_vec, body_vec])
-
+        if not subject or not body:
+            raise ValueError("Both 'subject' and 'body' fields must be non-empty.")
     
-    prediction = model.predict(combined_vec)
-    return jsonify({'prediction': 'ham' if prediction[0] == 0 else 'spam'})
+        subject = re.sub(r'[^a-zA-Z\s]', '', subject)
+        body = re.sub(r'[^a-zA-Z\s]', '', body)
+
+        # Transform the subject and body
+        subject_vec = subject_vectorizer.transform([subject])
+        body_vec = body_vectorizer.transform([body])
+        combined_vec = hstack([subject_vec, body_vec])
+
+        
+        prediction = model.predict(combined_vec)
+        return jsonify({'prediction': 'ham' if prediction[0] == 0 else 'spam'})
+    
+    except ValueError as ve:
+          return jsonify({'error': str(ve)}), 400
+    except Exception as e:
+          return jsonify({'error': str(e)}), 500
 
 
 if __name__ == '__main__':
