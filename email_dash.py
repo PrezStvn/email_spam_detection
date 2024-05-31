@@ -21,7 +21,7 @@ def create_bar_chart():
     fig = px.bar(label_counts, x='label', y='count', title="Distribution of Email Types")
     return fig
 
-def word_freq(type):
+def word_freq(type, section):
     vectorizer = CountVectorizer(stop_words='english')
     word_matrix = vectorizer.fit_transform(df[type])
 
@@ -29,11 +29,15 @@ def word_freq(type):
     word_counts = pd.DataFrame(word_matrix.sum(axis=0), columns=vectorizer.get_feature_names_out())
     word_counts = word_counts.transpose().reset_index()
     word_counts.columns = ['word', 'count']
+    asc = False
+    if section == 'bot':
+        asc = True
+    top_words = word_counts.sort_values('count', ascending=asc).head(20)
 
-    top_words = word_counts.sort_values('count', ascending=False).head(20)
-
-   
-    var_title = "Top Words in Email " + type
+    if section == 'bot':
+        var_title = "Rarest Words in Email " + type
+    else:
+        var_title = "Top Words in Email " + type
     fig = px.bar(top_words, x='word', y='count', title=var_title)
     return fig
 
@@ -55,8 +59,30 @@ app.layout = html.Div(children=[
     html.Div(id="result-output"),
 
     dcc.Graph(id='email-type-distribution'),
-    dcc.Graph(id='subject-word-frequency'),
-    dcc.Graph(id='body-word-frequency')
+    html.Div([
+        dcc.Dropdown(
+            id='subject-word-dropdown',
+            options=[
+                {'label': 'Top Words', 'value': 'top'},
+                {'label': 'Bottom Words', 'value': 'bot'}
+            ],
+            value='top',
+            style={'width': '50%'}
+        ),
+        dcc.Graph(id='subject-word-frequency'),
+    ]),
+    html.Div([
+        dcc.Dropdown(
+            id='body-word-dropdown',
+            options=[
+                {'label': 'Top Words', 'value': 'top'},
+                {'label': 'Bottom Words', 'value': 'bot'}
+            ],
+            value='top',
+            style={'width': '50%'}
+        ),
+        dcc.Graph(id='body-word-frequency'),
+    ])
 ])
 
 @app.callback(
@@ -87,17 +113,19 @@ def update_email_type_graph(_):
 
 @app.callback(
     Output('subject-word-frequency', 'figure'),
-    Input('subject-word-frequency', 'id')  
+    [Input('subject-word-dropdown', 'value'),
+     Input('subject-word-frequency', 'id')]
 )
-def update_word_freq_graph(_):
-    return word_freq('subject')
+def update_subject_word_freq_graph(dropdown_value, _):
+    return word_freq('subject', dropdown_value)
 
 @app.callback(
     Output('body-word-frequency', 'figure'),
-    Input('body-word-frequency', 'id')  
+    [Input('body-word-dropdown', 'value'),
+     Input('body-word-frequency', 'id')]
 )
-def update_body_word_freq_graph(_):
-    return word_freq('body')
+def update_body_word_freq_graph(dropdown_value, _):
+    return word_freq('body', dropdown_value)
 
 
 if __name__ == '__main__':
